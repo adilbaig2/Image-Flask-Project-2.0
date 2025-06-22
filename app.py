@@ -1,7 +1,6 @@
 import numpy as np
 import json
 from flask import Flask, render_template, request, send_file, redirect, url_for, flash, session
-import torch
 from transformers import CLIPProcessor, CLIPModel
 from sklearn.metrics.pairwise import cosine_similarity
 from PIL import Image
@@ -148,8 +147,9 @@ easyocr_reader = easyocr.Reader(['en'])  # Add more languages if needed
 
 def compute_embedding(image):
     inputs = processor(images=image, return_tensors="pt")
-    with torch.no_grad():
-        outputs = model.get_image_features(**inputs)
+    # with torch.no_grad():
+    # only for the next line    
+    outputs = model.get_image_features(**inputs)
     embedding = outputs / outputs.norm(p=2, dim=-1, keepdim=True)
     embedding = embedding.numpy()[0]
     return embedding
@@ -502,7 +502,7 @@ def binary():
 
     return render_template('binary.html', binary_files=binary_files, user_id=user_id, model_type=model_type)
 
-def convert_to_color_binary(image, out_file=None, model_type='clip', original_filename=None):
+def     convert_to_color_binary(image, out_file=None, model_type='clip', original_filename=None):
     try:
         # Convert image to RGB
         image = image.convert("RGB")
